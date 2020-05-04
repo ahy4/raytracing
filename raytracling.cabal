@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6c614a70d691c63a01c399aa390091f94c3b73ba320869c4b2396a59d465f5af
+-- hash: 6d9a73406d040bc0510904685f3b8542885852c28840be171d864081667d9375
 
 name:           raytracling
 version:        0.1.0.0
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Ray
       Vec3
   other-modules:
       Paths_raytracling
