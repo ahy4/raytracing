@@ -11,4 +11,4 @@ data Ray = Ray {
 } deriving (Show)
 
 pointAtParameter :: Ray -> Float -> Vec3 Float
-pointAtParameter ray t = origin ray +: (t .: direction ray)
+pointAtParameter ray t = origin ray +: scale t (direction ray)

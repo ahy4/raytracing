@@ -5,7 +5,7 @@ module Lib ( someFunc ) where
 import Data.List
 import Vec3
 import Ray (Ray(..), pointAtParameter)
-import Prelude (IO, Int, String, Float, writeFile, show, floor, ($), (<$>), fromIntegral, (-), (+), (*), (/))
+import Prelude (IO, Int, String, Float, Bool, writeFile, show, floor, ($), (<$>), fromIntegral, (-), (+), (*), (/), (**), (>=), otherwise)
 
 someFunc :: IO ()
 someFunc = writeFile "./aaa.ppm" ppmText
@@ -21,11 +21,22 @@ horizontal = Vec3 4 0 0
 vertical = Vec3 0 2 0
 originPoint = Vec3 0 0 0
 
+isInsideSphere :: Vec3 Float -> Float -> Ray -> Bool
+isInsideSphere center radius ray = discriminant >= 0
+  where
+    oc = origin ray -: center
+    a = squaredLength $ direction ray
+    b = oc .: direction ray
+    c = squaredLength oc - radius ** 2
+    discriminant = b ** 2 - a * c
+
 color :: Ray -> Vec3 Float
-color ray = ((1.0 - t) .: Vec3 1 1 1) +: (t .: Vec3 0.5 0.7 1)
+color ray | rayIsInsideSphere = Vec3 1 0 0
+          | otherwise         = scale (1.0 - t) (Vec3 1 1 1) +: scale t (Vec3 0.5 0.7 1)
   where
     unitDirection = unitVector $ direction ray
     t = (*) 0.5 $ y unitDirection + 1.0
+    rayIsInsideSphere = isInsideSphere (Vec3 0 0 (-1)) 0.5 ray
 
 toFloat :: Int -> Float
 toFloat n = fromIntegral n :: Float
@@ -41,7 +52,7 @@ ppmText = header ++ body ++ "\n"
         let v = y / toFloat height,
         let ray = Ray {
           origin=originPoint,
-          direction=lowerLeftCorner +: (u .: horizontal) +: (v .: vertical) }]
+          direction=lowerLeftCorner +: scale u horizontal +: scale v vertical }]
     previous = (+) (-1) <$> toFloat
 
 generateRgb :: Vec3 Float -> String

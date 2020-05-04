@@ -55,8 +55,13 @@ b = z
     y3 = y1 / y2
     z3 = z1 / z2
 
-(.:) :: Float -> Vec3 Float -> Vec3 Float
-t .: (Vec3 x y z) = Vec3 (t * x) (t * y) (t * z)
+(.:) :: Vec3 Float -> Vec3 Float -> Float
+v1 .: v2 = x v + y v + z v
+  where
+    v = v1 *: v2
+
+scale :: Float -> Vec3 Float -> Vec3 Float
+scale t v = Vec3 t t t *: v
 
 cross :: Vec3Operator Float
 (Vec3 x1 y1 z1) `cross` (Vec3 x2 y2 z2) = Vec3 x3 y3 z3
@@ -69,7 +74,7 @@ length :: Pick Float
 length = sqrt . squaredLength
 
 squaredLength :: Pick Float
-squaredLength (Vec3 x y z) = sum [x ** 2, y ** 2, z ** 2]
+squaredLength v = v .: v
 
 unitVector :: Vec3 Float -> Vec3 Float
-unitVector v = (1 / Vec3.length v) .: v
+unitVector v = scale (1 / Vec3.length v) v
