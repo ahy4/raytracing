@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b220b1c7e497fd3c4def19238533dcba6db3a9cd496dfece7f3b351145f7ba2b
+-- hash: 6c614a70d691c63a01c399aa390091f94c3b73ba320869c4b2396a59d465f5af
 
 name:           raytracling
 version:        0.1.0.0
@@ -28,12 +28,15 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Vec3
   other-modules:
       Paths_raytracling
   hs-source-dirs:
       src
+  default-extensions: NoImplicitPrelude
   build-depends:
       base >=4.7 && <5
+    , simple-vec3
   default-language: Haskell2010
 
 executable raytracling-exe
@@ -42,10 +45,12 @@ executable raytracling-exe
       Paths_raytracling
   hs-source-dirs:
       app
+  default-extensions: NoImplicitPrelude
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , raytracling
+    , simple-vec3
   default-language: Haskell2010
 
 test-suite raytracling-test
@@ -55,8 +60,10 @@ test-suite raytracling-test
       Paths_raytracling
   hs-source-dirs:
       test
+  default-extensions: NoImplicitPrelude
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , raytracling
+    , simple-vec3
   default-language: Haskell2010

@@ -1,8 +1,10 @@
-module Lib
-    ( someFunc
-    ) where
+{-# LANGUAGE NoImplicitPrelude #-}
+
+module Lib ( someFunc ) where
 
 import Data.List
+import Vec3
+import Prelude (IO, Int, String, Float, writeFile, show, floor, ($), (<$>), fromIntegral)
 
 someFunc :: IO ()
 someFunc = writeFile "./aaa.ppm" ppmText
@@ -13,21 +15,20 @@ width = 200
 height :: Int
 height = 100
 
+toFloat :: Int -> Float
+toFloat n = fromIntegral n :: Float
+
 ppmText :: String
-ppmText = ppmHeader ++ ppmBody ++ "\n"
+ppmText = header ++ body ++ "\n"
   where
-    ppmBody = intercalate "\n" [
-      generateRgb (divide x width) (divide y height) 0.2 |
-        y <- reverse [0..height-1],
-        x <- [0..width-1] ]
-    divide a b = (fromIntegral a::Float) / (fromIntegral b::Float)
+    header = "P3\n" ++ show width ++ " " ++ show height ++ "\n255\n"
+    body = intercalate "\n" [
+      generateRgb $ Vec3 (x `divide` toFloat width) (y `divide` toFloat height) 0.2 |
+        y <- reverse [0 .. previous height],
+        x <- [0 .. previous width] ]
+    previous = plus (-1) <$> toFloat
 
-ppmHeader :: String
-ppmHeader = "P3\n" ++ show width ++ " " ++ show height ++ "\n255\n"
-
-generateRgb :: Float -> Float -> Float -> String
-generateRgb r g b = ir ++ " " ++ ig ++ " " ++ ib
+generateRgb :: Vec3 Float -> String
+generateRgb (Vec3 r g b) = unwords [scale r, scale g, scale b]
   where
-    ir = show $ floor $ 255.99 * r
-    ig = show $ floor $ 255.99 * g
-    ib = show $ floor $ 255.99 * b
+    scale = show <$> floor <$> multiply 255.99

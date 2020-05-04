@@ -21,9 +21,13 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- simple-vec3
 
 library:
   source-dirs: src
+
+default-extensions:
+- NoImplicitPrelude
 
 executables:
   raytracling-exe:
