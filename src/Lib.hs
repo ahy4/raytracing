@@ -1,18 +1,20 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-
-module Lib ( someFunc ) where
+module Lib where
 
 import Data.List
 import Data.Maybe
 import Vec3
 import Ray (Ray(..), pointAtParameter)
-import Prelude (IO, Int, String, Float, Bool, writeFile, show, floor, ($), (<$>), fromIntegral, (-), (+), (*), (/), (**), (>=), (&&), otherwise)
+import Prelude
 import Hitable
 import HitableList
 import Sphere
+import Camera
+import System.Random
+import Util
+import Control.Monad
 
 someFunc :: IO ()
-someFunc = writeFile "./aaa.ppm" ppmText
+someFunc = writeFile "./aaa.ppm" =<< ppmText
 
 width :: Int
 width = 200
@@ -20,10 +22,7 @@ width = 200
 height :: Int
 height = 100
 
-lowerLeftCorner = Vec3 (-2.0) (-1.0) (-1.0)
-horizontal = Vec3 4 0 0
-vertical = Vec3 0 2 0
-originPoint = Vec3 0 0 0
+ns = 100
 
 spheres =
   [
@@ -49,24 +48,36 @@ color ray hitable
     hitResult = hit hitable ray 0 1000000
     isHit = isJust hitResult
 
-toFloat :: Int -> Float
-toFloat n = fromIntegral n :: Float
-
-ppmText :: String
-ppmText = header ++ body ++ "\n"
+ppmText :: IO String
+ppmText = (header ++) . (++ "\n") <$> body
   where
     header = "P3\n" ++ show width ++ " " ++ show height ++ "\n255\n"
-    body = intercalate "\n" [ generateRgb $ color ray world |
-        y <- reverse [0 .. previous height],
-        x <- [0 .. previous width],
-        let u = x / toFloat width,
-        let v = y / toFloat height,
-        let ray = Ray {
-          origin=originPoint,
-          direction=lowerLeftCorner +: scale u horizontal +: scale v vertical }]
+    body :: IO String
+    body = foldl1 glue
+      <$> sequence [ 
+        toRgbText <$> antialias colorFn (x, y) |
+        y <- reverse [ 0 .. previous height ],
+        x <- [ 0 .. previous width]
+      ]
     previous = (+) (-1) <$> toFloat
+    colorFn (x, y) = color (getRay x y) world
+    glue a b = a ++ "\n" ++ b
 
-generateRgb :: Vec3 Float -> String
-generateRgb (Vec3 r g b) = unwords [scale r, scale g, scale b]
+antialias :: ((Float, Float) -> Vec3 Float) -> (Float, Float) -> IO (Vec3 Float)
+antialias f p = average <$> colors
   where
-    scale = show <$> floor <$> (*) 255.99
+    zipped :: IO [(Float, Float)]
+    zipped = zip <$> createRandomList ns <*> createRandomList ns
+    colors :: IO [Vec3 Float]
+    colors = map (aroundColor p) <$> zipped
+    aroundColor :: (Float, Float) -> (Float, Float) -> Vec3 Float
+    aroundColor (x, y) (dx, dy) = f ((x + dx) / toFloat width, (y + dy) / toFloat height)
+
+createRandomList :: Int -> IO [Float]
+createRandomList len = replicateM len $ randomRIO (0, 1::Float)
+-- createRandomList len = sequence $ take len $ repeat $ randomRIO (0, 1::Float)
+
+toRgbText :: Vec3 Float -> String
+toRgbText (Vec3 r g b) = unwords [scale r, scale g, scale b]
+  where
+    scale = show . floor . (*) 255.99

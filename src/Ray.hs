@@ -1,5 +1,3 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-
 module Ray (Ray(..), pointAtParameter) where
 
 import Prelude (Float, ($), Show)

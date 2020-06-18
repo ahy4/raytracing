@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 72bbc882bc1fecabd1af06c7917f8881e07a655b19ea3f862841742072b29f83
+-- hash: 41d9757b971da6bdb5f00c8f721c2c6c987bfb0a9506590b9bb2a05e2f6f9085
 
 name:           raytracling
 version:        0.1.0.0
@@ -27,11 +27,13 @@ source-repository head
 
 library
   exposed-modules:
+      Camera
       Hitable
       HitableList
       Lib
       Ray
       Sphere
+      Util
       Vec3
   other-modules:
       Paths_raytracling
@@ -40,6 +42,7 @@ library
   default-extensions: NoImplicitPrelude
   build-depends:
       base >=4.7 && <5
+    , random
     , simple-vec3
   default-language: Haskell2010
 
@@ -53,6 +56,7 @@ executable raytracling-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , random
     , raytracling
     , simple-vec3
   default-language: Haskell2010
@@ -68,6 +72,7 @@ test-suite raytracling-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , random
     , raytracling
     , simple-vec3
   default-language: Haskell2010

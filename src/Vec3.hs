@@ -3,6 +3,7 @@
 module Vec3 where
 
 import Prelude
+import Util
 
 data Vec3 a = Vec3 a a a deriving (Show, Read, Eq)
 -- data Point = Point Float Float deriving (Show)
@@ -78,3 +79,6 @@ squaredLength v = v .: v
 
 unitVector :: Vec3 Float -> Vec3 Float
 unitVector v = scale (1 / Vec3.length v) v
+
+average :: [Vec3 Float] -> Vec3 Float
+average vectors = scale (1 / toFloat (Prelude.length vectors)) $ foldl1 (+:) vectors
