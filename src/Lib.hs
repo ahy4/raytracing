@@ -1,4 +1,4 @@
-module Lib where
+module Lib (main) where
 
 import Data.List
 import Data.Maybe
@@ -13,8 +13,8 @@ import System.Random
 import Util
 import Control.Monad
 
-someFunc :: IO ()
-someFunc = writeFile "./aaa.ppm" =<< ppmText
+main :: IO ()
+main = writeFile "./dest/image.ppm" =<< ppmText
 
 width :: Int
 width = 200
@@ -38,7 +38,7 @@ spheres =
 
 world = HitableList spheres
 
-color :: Hitable a => Ray -> a -> Vec3 Float
+color :: Hitable a => Ray -> a -> Vec3
 color ray hitable
   | isHit     = scale 0.5 $ normal (fromJust hitResult) +: Vec3 1 1 1
   | otherwise = scale (1.0 - t) (Vec3 1 1 1) +: scale t (Vec3 0.5 0.7 1)
@@ -55,7 +55,7 @@ ppmText = (header ++) . (++ "\n") <$> body
     body :: IO String
     body = foldl1 glue
       <$> sequence [ 
-        toRgbText <$> antialias colorFn (x, y) |
+        toRgbText . antialias colorFn (x, y) <$> newStdGen |
         y <- reverse [ 0 .. previous height ],
         x <- [ 0 .. previous width]
       ]
@@ -63,21 +63,18 @@ ppmText = (header ++) . (++ "\n") <$> body
     colorFn (x, y) = color (getRay x y) world
     glue a b = a ++ "\n" ++ b
 
-antialias :: ((Float, Float) -> Vec3 Float) -> (Float, Float) -> IO (Vec3 Float)
-antialias f p = average <$> colors
+antialias :: ((Float, Float) -> Vec3) -> (Float, Float) -> StdGen -> Vec3
+antialias f p stdGen = average colors
   where
-    zipped :: IO [(Float, Float)]
-    zipped = zip <$> createRandomList ns <*> createRandomList ns
-    colors :: IO [Vec3 Float]
-    colors = map (aroundColor p) <$> zipped
-    aroundColor :: (Float, Float) -> (Float, Float) -> Vec3 Float
+    colors :: [Vec3]
+    colors = map (aroundColor p) zipped
+    aroundColor :: (Float, Float) -> (Float, Float) -> Vec3
     aroundColor (x, y) (dx, dy) = f ((x + dx) / toFloat width, (y + dy) / toFloat height)
+    createRandomList :: StdGen -> [Float]
+    createRandomList stgGen = take ns $ randomRs (0, 1) stgGen :: [Float]
+    zipped = zip (createRandomList stdGen) $ createRandomList $ snd $ next stdGen
 
-createRandomList :: Int -> IO [Float]
-createRandomList len = replicateM len $ randomRIO (0, 1::Float)
--- createRandomList len = sequence $ take len $ repeat $ randomRIO (0, 1::Float)
-
-toRgbText :: Vec3 Float -> String
+toRgbText :: Vec3 -> String
 toRgbText (Vec3 r g b) = unwords [scale r, scale g, scale b]
   where
     scale = show . floor . (*) 255.99

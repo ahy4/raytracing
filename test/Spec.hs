@@ -1,2 +1,9 @@
+import Prelude
+import Test.Hspec
+import SphereTest
+import Vec3Test
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = do
+  SphereTest.test
+  Vec3Test.test

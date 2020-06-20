@@ -6,13 +6,13 @@ import Ray
 import Hitable
 
 data Sphere = Sphere {
-  center :: Vec3 Float,
+  center :: Vec3,
   radius :: Float
 }
 
 instance Hitable Sphere where
   hit sphere ray tMin tMax
-    | discriminant <= 0 = Nothing
+    | discriminant < 0 = Nothing
     | tMin <= t1 && t1 <= tMax = Just $ hitRecord t1
     | tMin <= t2 && t2 <= tMax = Just $ hitRecord t2
     | otherwise = Nothing
