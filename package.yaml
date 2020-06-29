@@ -43,6 +43,21 @@ executables:
     dependencies:
     - raytracling
 
+# executables:
+#   raytracling-dev:
+#     main:                Main.hs
+#     source-dirs:         app
+#     ghc-options:
+#     - -threaded
+#     - -rtsopts
+#     - -with-rtsopts=-N
+#     - -fprof-auto
+#     - -O3
+#     # - --enable-library-profiling
+#     # - --enable-profiling
+#     dependencies:
+#     - raytracling
+
 tests:
   raytracling-test:
     main:                Spec.hs

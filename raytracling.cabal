@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5a7392110e0e747ec609e12f7d700ae1e332ea83c07d338379ab147198fda994
+-- hash: 23c2bc847e015805f401eb8807dc4eee55ee6312b992e96b44c1fccbab8f8a60
 
 name:           raytracling
 version:        0.1.0.0
@@ -68,6 +68,7 @@ test-suite raytracling-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      LibTest
       SphereTest
       Vec3Test
       Paths_raytracling
