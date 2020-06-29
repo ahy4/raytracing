@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e2fc614d0013c7f2a374ec7dda4f9edba8a8655e5c756cabd331bd3ce282b29f
+-- hash: 5a7392110e0e747ec609e12f7d700ae1e332ea83c07d338379ab147198fda994
 
 name:           raytracling
 version:        0.1.0.0
@@ -33,7 +33,6 @@ library
       Lib
       Ray
       Sphere
-      Util
       Vec3
   other-modules:
       Paths_raytracling

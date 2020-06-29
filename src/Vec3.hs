@@ -1,7 +1,7 @@
 module Vec3 where
 
 import Prelude
-import Util
+import GHC.Float
 
 data Vec3 = Vec3 {
   x :: Float,
@@ -72,4 +72,4 @@ unitVector :: Vec3 -> Vec3
 unitVector v = scale (1 / Vec3.length v) v
 
 average :: [Vec3] -> Vec3
-average vectors = scale (1 / toFloat (Prelude.length vectors)) $ foldl1 (+:) vectors
+average vectors = scale (1 / int2Float (Prelude.length vectors)) $ foldl1 (+:) vectors

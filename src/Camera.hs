@@ -11,5 +11,5 @@ originPoint = Vec3 0 0 0
 
 getRay :: Float -> Float -> Ray
 getRay u v = Ray
-  { origin=originPoint,
-    direction=lowerLeftCorner +: scale u horizontal +: scale v vertical -: originPoint }
+  { origin=originPoint
+  , direction=lowerLeftCorner +: scale u horizontal +: scale v vertical -: originPoint }
