@@ -3,7 +3,7 @@ module Lib where
 import Data.List
 import Data.Maybe
 import Vec3
-import Ray (Ray(..), pointAtParameter)
+import Ray
 import Prelude
 import Hitable
 import HitableList
@@ -50,12 +50,15 @@ randomInUnitSphere g1 = Vec3 1 1 1
 color :: Hitable a => Ray -> a -> Vec3
 color ray hitable
   | isHit     = scale 0.5 $ normal (fromJust hitResult) +: Vec3 1 1 1
-  | otherwise = scale (1.0 - t) (Vec3 1 1 1) +: scale t (Vec3 0.5 0.7 1)
+  | otherwise = gradation t (Vec3 1 1 1) (Vec3 0.5 0.7 1)
   where
     unitDirection = unitVector $ direction ray
     t = (*) 0.5 $ y unitDirection + 1.0
     hitResult = hit hitable ray 0 1000000
     isHit = isJust hitResult
+
+gradation :: Float -> Vec3 -> Vec3 -> Vec3
+gradation t from to = scale (1.0 - t) from +: scale t to
 
 ppmText :: StdGen -> String
 ppmText gen = header ++ body ++ "\n"
