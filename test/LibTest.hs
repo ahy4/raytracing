@@ -14,4 +14,5 @@ test = hspec $ do
     Prelude.length (filter (== '\n') text) `shouldBe` 20003
 
   it "should be proper color" $ do
-    color (getRay 0 0) world `shouldBe` Vec3 127 179 255
+    toRgbText (color (getRay 0 0) world) `shouldBe` "165 201 255"
+    toRgbText (color (getRay 50 30) world) `shouldBe` "175 207 255"
