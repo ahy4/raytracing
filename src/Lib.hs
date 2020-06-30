@@ -12,6 +12,7 @@ import Camera
 import System.Random
 import Control.Monad
 import GHC.Float
+import Debug.Trace
 
 main :: IO ()
 main = writeFile "./dest/image.ppm" =<< ppmText <$> newStdGen
