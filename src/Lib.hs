@@ -9,13 +9,22 @@ import Hitable
 import HitableList
 import Sphere
 import Camera
+import Color
 import System.Random
 import Control.Monad
+import Control.Exception
 import GHC.Float
 import Debug.Trace
 
 main :: IO ()
-main = writeFile "./dest/image.ppm" =<< ppmText <$> newStdGen
+main = writeFileWrap "./dest/image.ppm" =<< text
+  where
+    text :: IO (Maybe String)
+    text = ppmText <$> newStdGen
+    writeFileWrap :: String -> Maybe String -> IO ()
+    writeFileWrap path content
+      | isJust content = writeFile path $ fromJust content
+      | otherwise = fail "Second argument is not Just."
 
 width :: Int
 width = 200
@@ -47,10 +56,10 @@ randomInUnitSphere g1 = Vec3 1 1 1
     (r3, g4) = next g3
     (r4,  _) = next g4
 
-color :: Hitable a => Ray -> a -> Vec3
+color :: Hitable a => Ray -> a -> Maybe Color
 color ray hitable
-  | isHit     = scale 0.5 $ normal (fromJust hitResult) +: Vec3 1 1 1
-  | otherwise = gradation t (Vec3 1 1 1) (Vec3 0.5 0.7 1)
+  | isHit     = mkColor $ scale 0.5 $ normal (fromJust hitResult) +: Vec3 1 1 1
+  | otherwise = mkColor $ gradation t (Vec3 1 1 1) (Vec3 0.5 0.7 1)
   where
     unitDirection = unitVector $ direction ray
     t = (*) 0.5 $ y unitDirection + 1.0
@@ -60,27 +69,29 @@ color ray hitable
 gradation :: Float -> Vec3 -> Vec3 -> Vec3
 gradation t from to = scale (1.0 - t) from +: scale t to
 
-ppmText :: StdGen -> String
-ppmText gen = header ++ body ++ "\n"
+ppmText :: StdGen -> Maybe String
+ppmText gen 
+  | hasNoErr = Just $ header ++ body ++ "\n"
+  | otherwise = Nothing
   where
     header = "P3\n" ++ show width ++ " " ++ show height ++ "\n255\n"
-    body :: String
-    body = intercalate "\n" [ toRgbText $ antialias 10 colorFn (x, y) |
+    body = intercalate "\n" $ map (toRgbText.fromJust) colors
+    hasNoErr = all isJust colors
+    colors = [ antialias 10 colorFn (x, y) |
       y <- reverse [0..int2Float height-1],
       x <- [0..int2Float width-1] ]
     colorFn (x, y) = color (getRay x y) world
 
-antialias :: Int -> ((Float, Float) -> Vec3) -> (Float, Float) -> Vec3
-antialias len originalFunc appliedPoint = average colors
+antialias :: Int -> ((Float, Float) -> Maybe Color) -> (Float, Float) -> Maybe Color
+antialias len originalFunc appliedPoint = avr colors
   where
-    colors :: [Vec3]
+    avr :: [Maybe Color] -> Maybe Color
+    avr xs
+      | all isJust xs = mkColor $ average $ map (props.fromJust) xs
+      | otherwise = Nothing
+    colors :: [Maybe Color]
     colors = map (aroundColor appliedPoint) distances
-    aroundColor :: (Float, Float) -> (Float, Float) -> Vec3
+    aroundColor :: (Float, Float) -> (Float, Float) -> Maybe Color
     aroundColor (x, y) (dx, dy) = originalFunc ((x + dx) / int2Float width, (y + dy) / int2Float height)
     l = int2Float len
     distances = [ (x/l, y/l) | x <- [0..l-1], y <- [0..l-1]]
-
-toRgbText :: Vec3 -> String
-toRgbText (Vec3 r g b) = unwords [scale r, scale g, scale b]
-  where
-    scale = show . floor . (*) 255.99

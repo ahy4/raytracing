@@ -9,16 +9,6 @@ data Vec3 = Vec3 {
   z :: Float
 } deriving (Show, Read, Eq)
 
-type Vec3Operator = Vec3 -> Vec3 -> Vec3
-type Vec3SingleOperator = Vec3 -> Vec3
-
-r :: Vec3 -> Float
-g :: Vec3 -> Float
-b :: Vec3 -> Float
-r = x
-g = y
-b = z
-
 (+:) :: Vec3 -> Vec3 -> Vec3
 (Vec3 x1 y1 z1) +: (Vec3 x2 y2 z2) = Vec3 x3 y3 z3
   where

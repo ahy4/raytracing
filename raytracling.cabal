@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 23c2bc847e015805f401eb8807dc4eee55ee6312b992e96b44c1fccbab8f8a60
+-- hash: e47be2d6195dd6adac9099129778e25dd04e214318a4413c7e58a7279ff12c53
 
 name:           raytracling
 version:        0.1.0.0
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Camera
+      Color
       Hitable
       HitableList
       Lib
@@ -42,6 +43,7 @@ library
   build-depends:
       base >=4.7 && <5
     , cond
+    , exceptions
     , hspec
     , random
     , simple-vec3
@@ -58,6 +60,7 @@ executable raytracling-exe
   build-depends:
       base >=4.7 && <5
     , cond
+    , exceptions
     , hspec
     , random
     , raytracling
@@ -68,6 +71,7 @@ test-suite raytracling-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      ColorTest
       LibTest
       SphereTest
       Vec3Test
@@ -79,6 +83,7 @@ test-suite raytracling-test
   build-depends:
       base >=4.7 && <5
     , cond
+    , exceptions
     , hspec
     , random
     , raytracling

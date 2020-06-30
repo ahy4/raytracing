@@ -25,6 +25,7 @@ dependencies:
 - random
 - cond
 - hspec
+- exceptions
 
 library:
   source-dirs: src
