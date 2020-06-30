@@ -65,7 +65,7 @@ ppmText gen = header ++ body ++ "\n"
   where
     header = "P3\n" ++ show width ++ " " ++ show height ++ "\n255\n"
     body :: String
-    body = intercalate "\n" [ toRgbText $ colorFn (x, y) |
+    body = intercalate "\n" [ toRgbText $ antialias 10 colorFn (x, y) |
       y <- reverse [0..int2Float height-1],
       x <- [0..int2Float width-1] ]
     colorFn (x, y) = color (getRay x y) world
