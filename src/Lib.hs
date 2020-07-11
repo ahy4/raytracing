@@ -1,3 +1,5 @@
+{-# LANGUAGE RankNTypes #-}
+
 module Lib where
 
 import Data.List
@@ -47,23 +49,24 @@ spheres =
 world = HitableList spheres
 
 -- -1 < x,y,z < +1 における、単位球内の点を選ぶ
-randomInUnitSphere :: StdGen -> Vec3
-randomInUnitSphere g1 = Vec3 1 1 1
+randomInUnitSphere :: StdGen -> (StdGen, Vec3)
+randomInUnitSphere g1
+  | squaredLength p <= 1 = (g4, p)
+  | otherwise = randomInUnitSphere g4
   where
-    p = scale 2
-    (r1, g2) = next g1
-    (r2, g3) = next g2
-    (r3, g4) = next g3
-    (r4,  _) = next g4
+    p = scale 2 (Vec3 r1 r2 r3) -: Vec3 1 1 1
+    (r1, g2) = random g1
+    (r2, g3) = random g2
+    (r3, g4) = random g3
 
-color :: Hitable a => Ray -> a -> Maybe Color
-color ray hitable
+color :: Hitable a => Ray -> a -> StdGen -> Maybe Color
+color ray hitable gen
   | isHit     = mkColor $ scale 0.5 $ normal (fromJust hitResult) +: Vec3 1 1 1
   | otherwise = mkColor $ gradation t (Vec3 1 1 1) (Vec3 0.5 0.7 1)
   where
     unitDirection = unitVector $ direction ray
     t = (*) 0.5 $ y unitDirection + 1.0
-    hitResult = hit hitable ray 0 1000000
+    hitResult = hit hitable ray 0 1e10
     isHit = isJust hitResult
 
 gradation :: Float -> Vec3 -> Vec3 -> Vec3
@@ -80,9 +83,11 @@ ppmText gen
     colors = [ antialias 10 colorFn (x, y) |
       y <- reverse [0..int2Float height-1],
       x <- [0..int2Float width-1] ]
-    colorFn (x, y) = color (getRay x y) world
+    colorFn (x, y) = color (getRay x y) world gen
 
-antialias :: Int -> ((Float, Float) -> Maybe Color) -> (Float, Float) -> Maybe Color
+type ColorFunctionType = (Float, Float) -> Maybe Color
+
+antialias :: Int -> ColorFunctionType -> ColorFunctionType
 antialias len originalFunc appliedPoint = avr colors
   where
     avr :: [Maybe Color] -> Maybe Color
