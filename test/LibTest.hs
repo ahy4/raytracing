@@ -8,6 +8,7 @@ import Camera
 import Vec3
 import Color
 import Data.Maybe
+import Control.Monad
 
 test :: IO ()
 test = hspec $ do
@@ -17,12 +18,13 @@ test = hspec $ do
     -- Prelude.length (filter (== '\n') text) `shouldBe` 20003
 
   it "color should create Just" $ do
-    color (getRay 0 0) world `shouldSatisfy` isJust
-    color (getRay 20 20) world `shouldSatisfy` isJust
-    color (getRay 50 0) world `shouldSatisfy` isJust
-    color (getRay 0 100) world `shouldSatisfy` isJust
-    color (getRay 150 30) world `shouldSatisfy` isJust
-    color (getRay 200 100) world `shouldSatisfy` isJust
+    let gen = mkStdGen 7
+    color (getRay 0 0) world gen `shouldSatisfy` isJust
+    color (getRay 20 20) world gen `shouldSatisfy` isJust
+    color (getRay 50 0) world gen `shouldSatisfy` isJust
+    color (getRay 0 100) world gen `shouldSatisfy` isJust
+    color (getRay 150 30) world gen `shouldSatisfy` isJust
+    color (getRay 200 100) world gen `shouldSatisfy` isJust
 
   let colorFn (x, y) = mkColor $ unitVector $ Vec3 x y (x+y/2)
 
@@ -35,3 +37,7 @@ test = hspec $ do
   it "antialias should create Nothing when colorFn create Nothing" $ do
     colorFn (100, -1) `shouldSatisfy` isNothing
     antialias 2 colorFn (100, -1) `shouldSatisfy` isNothing
+
+  it "creates random vector in sphere" $ do
+    forM_ [1..100] $ \n -> do
+      randomInUnitSphere (mkStdGen n) `shouldSatisfy` (<=1) . Vec3.length . snd
