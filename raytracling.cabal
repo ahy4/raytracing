@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2b73aeac5fcf0694def72dd3199dcbb2ee0ef10047572d90cd72cdfc01a69e84
+-- hash: 235f0084c6df6d08b1e2edf1f9f84b0e3aabab855f309c66c21a8eb6572ca735
 
 name:           raytracling
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Antialias
       Camera
       Color
       Hitable
@@ -72,6 +73,7 @@ test-suite raytracling-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      AntialiasTest
       ColorTest
       LibTest
       RandomUtilTest

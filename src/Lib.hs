@@ -18,6 +18,7 @@ import Control.Exception
 import GHC.Float
 import Debug.Trace
 import RandomUtil
+import Antialias
 
 main :: IO ()
 main = writeFileWrap "./dest/image.ppm" =<< text
@@ -89,23 +90,3 @@ ppmText gen
     zipped = zip positions gens
     colorFn (x, y) = color (getRay x y) world
     colors = [ antialias 10 colorFn pos g | (pos, g) <- zipped ]
-
-type ColorFunctionType = (Float, Float) -> StdGen -> Maybe Color
-
-antialias :: Int -> ColorFunctionType -> ColorFunctionType
-antialias len originalFunc appliedPoint gen = avr colors
-  where
-    avr :: [Maybe Color] -> Maybe Color
-    avr xs
-      | all isJust xs = mkColor $ average $ map (props.fromJust) xs
-      | otherwise = Nothing
-    colors :: [Maybe Color]
-    colors = map (uncurry $ aroundColor appliedPoint) zipped
-    aroundColor :: (Float, Float) -> (Float, Float) -> StdGen-> Maybe Color
-    aroundColor (x, y) (dx, dy) = originalFunc pos
-      where
-        pos = ((x + dx) / int2Float width, (y + dy) / int2Float height)
-    l = int2Float len
-    gens = createRandomGeneratorsLazy gen
-    distances = [ (x/l, y/l) | x <- [0..l-1], y <- [0..l-1] ]
-    zipped = zip distances gens
