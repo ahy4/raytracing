@@ -14,8 +14,7 @@ test :: IO ()
 test = hspec $ do
   it "doesn't leak memory" $ do
     let text = ppmText $ mkStdGen 10
-    1 `shouldBe` 1
-    -- Prelude.length (filter (== '\n') text) `shouldBe` 20003
+    Prelude.length (filter (== '\n') (fromJust text)) `shouldBe` 20003
 
   it "color should create Just" $ do
     let gen = mkStdGen 7

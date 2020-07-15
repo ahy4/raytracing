@@ -24,14 +24,11 @@ test = hspec $ do
     let ray = Ray (Vec3 0 4 0) (Vec3 5 0 0)
     hit sphere ray 0 10000000 `shouldSatisfy` isNothing
 
-  it "when touch the ray to sphere, mark as hit" $ do
+  it "when touch the ray to sphere, mark as unhit" $ do
     let sphere = Sphere (Vec3 2 2 0) 1
     let ray = Ray (Vec3 0 3 0) (Vec3 5 0 0)
     let hitResult = hit sphere ray 0 10000000
-    hitResult `shouldSatisfy` isJust
-    let hitRecord = fromJust hitResult
-    p hitRecord `shouldBe` Vec3 2 3 0
-    normal hitRecord `shouldBe` Vec3 0 1 0
+    hitResult `shouldSatisfy` isNothing
 
   it "doesn't hit because ray is too short" $ do
     let sphere = Sphere (Vec3 2 2 0) 1

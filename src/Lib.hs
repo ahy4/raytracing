@@ -61,15 +61,22 @@ randomInUnitSphere g1
 
 color :: Hitable a => Ray -> a -> StdGen -> Maybe Color
 color ray hitable gen
-  | isHit     = color (Ray (p hitPosition) (normal hitPosition +: random)) world nextGen
+  | isHit     = scaleMaybeColor 0.5 $ color nextRay world nextGen
   | otherwise = mkColor $ gradation t (Vec3 1 1 1) (Vec3 0.5 0.7 1)
   where
     isHit = isJust hitResult
-    hitResult = hit hitable ray 0 1e10
+    hitResult = hit hitable ray 1e-10 1e10 -- when t=0, hit self object
 
     -- when hit
-    hitPosition = fromJust hitResult
+    hitRecord = fromJust hitResult
     (nextGen, random) = randomInUnitSphere gen
+    nextRay = Ray {
+        origin = p hitRecord,
+        direction = normal hitRecord +: random
+      }
+    scaleMaybeColor :: Float -> Maybe Color -> Maybe Color
+    scaleMaybeColor _ Nothing = Nothing
+    scaleMaybeColor x (Just color) = mkColor $ scale x $ props color
 
     -- when not hit
     gradation :: Float -> Vec3 -> Vec3 -> Vec3
