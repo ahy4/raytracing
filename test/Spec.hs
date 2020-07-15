@@ -4,6 +4,7 @@ import SphereTest
 import Vec3Test
 import LibTest
 import ColorTest
+import RandomUtilTest
 
 main :: IO ()
 main = do
@@ -11,3 +12,4 @@ main = do
   Vec3Test.test
   LibTest.test
   ColorTest.test
+  RandomUtilTest.test

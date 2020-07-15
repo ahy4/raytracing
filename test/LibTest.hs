@@ -8,7 +8,6 @@ import Camera
 import Vec3
 import Color
 import Data.Maybe
-import Control.Monad
 
 test :: IO ()
 test = hspec $ do
@@ -36,7 +35,3 @@ test = hspec $ do
   it "antialias should create Nothing when colorFn create Nothing" $ do
     colorFn (100, -1) `shouldSatisfy` isNothing
     antialias 2 colorFn (100, -1) `shouldSatisfy` isNothing
-
-  it "creates random vector in sphere" $ do
-    forM_ [1..100] $ \n -> do
-      randomInUnitSphere (mkStdGen n) `shouldSatisfy` (<=1) . Vec3.length . snd

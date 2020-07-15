@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.1.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e47be2d6195dd6adac9099129778e25dd04e214318a4413c7e58a7279ff12c53
+-- hash: 2b73aeac5fcf0694def72dd3199dcbb2ee0ef10047572d90cd72cdfc01a69e84
 
 name:           raytracling
 version:        0.1.0.0
@@ -32,6 +32,7 @@ library
       Hitable
       HitableList
       Lib
+      RandomUtil
       Ray
       Sphere
       Vec3
@@ -73,6 +74,7 @@ test-suite raytracling-test
   other-modules:
       ColorTest
       LibTest
+      RandomUtilTest
       SphereTest
       Vec3Test
       Paths_raytracling
