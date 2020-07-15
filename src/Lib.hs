@@ -87,22 +87,25 @@ ppmText gen
       y <- reverse [0..int2Float height-1],
       x <- [0..int2Float width-1] ]
     zipped = zip positions gens
-    colors = [ antialias 2 colorFn pos |
-      (pos, g) <- zipped,
-      let colorFn (x, y) = color (getRay x y) world g ]
+    colorFn (x, y) = color (getRay x y) world
+    colors = [ antialias 10 colorFn pos g | (pos, g) <- zipped ]
 
-type ColorFunctionType = (Float, Float) -> Maybe Color
+type ColorFunctionType = (Float, Float) -> StdGen -> Maybe Color
 
 antialias :: Int -> ColorFunctionType -> ColorFunctionType
-antialias len originalFunc appliedPoint = avr colors
+antialias len originalFunc appliedPoint gen = avr colors
   where
     avr :: [Maybe Color] -> Maybe Color
     avr xs
       | all isJust xs = mkColor $ average $ map (props.fromJust) xs
       | otherwise = Nothing
     colors :: [Maybe Color]
-    colors = map (aroundColor appliedPoint) distances
-    aroundColor :: (Float, Float) -> (Float, Float) -> Maybe Color
-    aroundColor (x, y) (dx, dy) = originalFunc ((x + dx) / int2Float width, (y + dy) / int2Float height)
+    colors = map (uncurry $ aroundColor appliedPoint) zipped
+    aroundColor :: (Float, Float) -> (Float, Float) -> StdGen-> Maybe Color
+    aroundColor (x, y) (dx, dy) = originalFunc pos
+      where
+        pos = ((x + dx) / int2Float width, (y + dy) / int2Float height)
     l = int2Float len
+    gens = createRandomGeneratorsLazy gen
     distances = [ (x/l, y/l) | x <- [0..l-1], y <- [0..l-1] ]
+    zipped = zip distances gens
