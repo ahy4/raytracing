@@ -1,0 +1,95 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 235f0084c6df6d08b1e2edf1f9f84b0e3aabab855f309c66c21a8eb6572ca735
+
+name:           raytracling
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/raytracling#readme>
+homepage:       https://github.com/githubuser/raytracling#readme
+bug-reports:    https://github.com/githubuser/raytracling/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2020 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/raytracling
+
+library
+  exposed-modules:
+      Antialias
+      Camera
+      Color
+      Hitable
+      HitableList
+      Lib
+      RandomUtil
+      Ray
+      Sphere
+      Vec3
+  other-modules:
+      Paths_raytracling
+  hs-source-dirs:
+      src
+  default-extensions: NoImplicitPrelude
+  build-depends:
+      base >=4.7 && <5
+    , cond
+    , exceptions
+    , hspec
+    , random
+    , simple-vec3
+  default-language: Haskell2010
+
+executable raytracling-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_raytracling
+  hs-source-dirs:
+      app
+  default-extensions: NoImplicitPrelude
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , cond
+    , exceptions
+    , hspec
+    , random
+    , raytracling
+    , simple-vec3
+  default-language: Haskell2010
+
+test-suite raytracling-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      AntialiasTest
+      ColorTest
+      LibTest
+      RandomUtilTest
+      SphereTest
+      Vec3Test
+      Paths_raytracling
+  hs-source-dirs:
+      test
+  default-extensions: NoImplicitPrelude
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , cond
+    , exceptions
+    , hspec
+    , random
+    , raytracling
+    , simple-vec3
+  default-language: Haskell2010
