@@ -80,7 +80,7 @@ ppmText gen
   | hasNoErr = Just $ header ++ body ++ "\n"
   | otherwise = Nothing
   where
-    header = "P3\n" ++ show width ++ " " ++ show height ++ "\n255\n"
+    header = "P3\n" ++ show (round width) ++ " " ++ show (round height) ++ "\n255\n"
     body = intercalate "\n" $ map (toRgbText.fromJust) colors
     hasNoErr = all isJust colors
     gens = createRandomGeneratorsLazy gen
