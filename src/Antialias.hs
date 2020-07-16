@@ -7,14 +7,12 @@ import Data.Maybe
 import Vec3
 import GHC.Float
 import RandomUtil
+import Debug.Trace
 
 type ColorFunctionType = (Float, Float) -> StdGen -> Maybe Color
 
--- どうしよう
-height=100
-width=200
-
 antialias :: Int -> ColorFunctionType -> ColorFunctionType
+-- どのくらい周辺をチェックしてantialiasの参考にするかを決めないとなので、duのサイズかwidthを渡す必要がある
 antialias len originalFunc appliedPoint gen = avr colors
   where
     avr :: [Maybe Color] -> Maybe Color
@@ -24,10 +22,8 @@ antialias len originalFunc appliedPoint gen = avr colors
     colors :: [Maybe Color]
     colors = map (uncurry $ aroundColor appliedPoint) zipped
     aroundColor :: (Float, Float) -> (Float, Float) -> StdGen-> Maybe Color
-    aroundColor (x, y) (dx, dy) = originalFunc pos
-      where
-        pos = ((x + dx) / int2Float width, (y + dy) / int2Float height)
+    aroundColor (u, v) (du, dv) = originalFunc (u + du, v + dv)
     l = int2Float len
     gens = createRandomGeneratorsLazy gen
-    distances = [ (x/l, y/l) | x <- [0..l-1], y <- [0..l-1] ]
+    distances = [ (du/l, dv/l) | du <- [0..l-1], dv <- [0..l-1] ]
     zipped = zip distances gens

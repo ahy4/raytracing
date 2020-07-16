@@ -84,9 +84,9 @@ ppmText gen
     body = intercalate "\n" $ map (toRgbText.fromJust) colors
     hasNoErr = all isJust colors
     gens = createRandomGeneratorsLazy gen
-    positions = [ (x, y) |
-      y <- reverse [0..int2Float height-1],
-      x <- [0..int2Float width-1] ]
+    positions = [ (int2Float x / int2Float width, int2Float y / int2Float height) |
+      y <- reverse [0..height-1],
+      x <- [0..width-1] ]
     zipped = zip positions gens
-    colorFn (x, y) = color (getRay x y) world
+    colorFn (u, v) = color (getRay u v) world
     colors = [ antialias 10 colorFn pos g | (pos, g) <- zipped ]
