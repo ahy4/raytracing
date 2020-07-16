@@ -30,10 +30,10 @@ main = writeFileWrap "./dest/image.ppm" =<< text
       | isJust content = writeFile path $ fromJust content
       | otherwise = fail "Second argument is not Just."
 
-width :: Int
+width :: Float
 width = 200
 
-height :: Int
+height :: Float
 height = 100
 
 spheres =
@@ -84,9 +84,9 @@ ppmText gen
     body = intercalate "\n" $ map (toRgbText.fromJust) colors
     hasNoErr = all isJust colors
     gens = createRandomGeneratorsLazy gen
-    positions = [ (int2Float x / int2Float width, int2Float y / int2Float height) |
+    positions = [ (x / width, y / height) |
       y <- reverse [0..height-1],
       x <- [0..width-1] ]
     zipped = zip positions gens
     colorFn (u, v) = color (getRay u v) world
-    colors = [ antialias 10 colorFn pos g | (pos, g) <- zipped ]
+    colors = [ antialias 10 (width, height) colorFn pos g | (pos, g) <- zipped ]

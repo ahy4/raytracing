@@ -18,5 +18,6 @@ mkColor vec
 toRgbText :: Color -> String
 toRgbText color = unwords [createBy x, createBy y, createBy z]
   where
-    createText = show . floor . (*) 255.99
+    -- sqrtはガンマ補正2
+    createText = show . floor . (*) 255.99 . sqrt
     createBy getter = createText $ getter $ props color

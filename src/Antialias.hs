@@ -11,9 +11,9 @@ import Debug.Trace
 
 type ColorFunctionType = (Float, Float) -> StdGen -> Maybe Color
 
-antialias :: Int -> ColorFunctionType -> ColorFunctionType
--- どのくらい周辺をチェックしてantialiasの参考にするかを決めないとなので、duのサイズかwidthを渡す必要がある
-antialias len originalFunc appliedPoint gen = avr colors
+antialias :: Int -> (Float, Float) -> ColorFunctionType -> ColorFunctionType
+-- 1pxのサイズ/スケールがわからないので、widthとheightをもらう必要がある
+antialias len (canvasWidth, canvasHeight) originalFunc appliedPoint gen = avr colors
   where
     avr :: [Maybe Color] -> Maybe Color
     avr xs
@@ -25,5 +25,5 @@ antialias len originalFunc appliedPoint gen = avr colors
     aroundColor (u, v) (du, dv) = originalFunc (u + du, v + dv)
     l = int2Float len
     gens = createRandomGeneratorsLazy gen
-    distances = [ (du/l, dv/l) | du <- [0..l-1], dv <- [0..l-1] ]
+    distances = [ (du/l/canvasWidth, dv/l/canvasHeight) | du <- [0..l-1], dv <- [0..l-1] ]
     zipped = zip distances gens
